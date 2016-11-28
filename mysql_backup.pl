@@ -2,9 +2,12 @@
 ####
 #       Author:         Anton Antonov  <aantonov@neterra.net>
 #       Author:         Zhivko Todorov <ztodorov@neterra.net> - add feature to pass custom arguments and code cleanup
-#       Date:           13-Jul-2016
-#       Version:        1.3.3
+#       Date:           28-Nov-2016
+#       Version:        1.3.4
 #       License:        GPL
+#
+# Changelog: 28-Nov-2016 1.3.4 - added --single-transaction parameter for mysqldump
+# Changelog: 13-Jul-2016 1.3.3 - added single quotes around mysql password
 ####
 
 use strict;
@@ -93,7 +96,7 @@ MAIN:
 
 
     # connect to mysql server
-    my $dbh = DBI->connect( "DBI:mysql:mysql;host=$mysql_host;port=$mysql_port", $mysql_user, $mysql_pass, { RaiseError => 1 } ) or 
+    my $dbh = DBI->connect( "DBI:mysql:mysql;host=$mysql_host;port=$mysql_port", $mysql_user, $mysql_pass, { RaiseError => 1 } ) or
 die( "Couldn't connect to database: " . DBI->errstr );
 
     # if allDBinOneFile
@@ -110,7 +113,7 @@ die( "Couldn't connect to database: " . DBI->errstr );
             # Special symbols MUST be escaped!
             # 0 means false, 1 means true
             # sub cmd_sql parameters: ($server_params, $cmd_sql, $tmp_file , $compress,  $comment_output)
-            
+
             # send commant to SQL server
             cmd_sql($server_params, 'STOP SLAVE SQL_THREAD', 0 , 0 , 0);
 
@@ -121,11 +124,11 @@ die( "Couldn't connect to database: " . DBI->errstr );
 
         if ($user_option{"stopslave"}) {
             print "   >> Dumping all databases in '$tmp_file' WITH master data...\n";
-            system("/usr/bin/mysqldump $server_params --master-data=1 -B -A | $compress >> $tmp_file");
+            system("/usr/bin/mysqldump $server_params --single-transaction --master-data=1 -B -A | $compress >> $tmp_file");
         }
         else {
             print "   >> Dumping all databases in '$tmp_file' WITHOUT master data...\n";
-            system("/usr/bin/mysqldump $server_params -B -A | $compress >> $tmp_file");
+            system("/usr/bin/mysqldump $server_params --single-transaction -B -A | $compress >> $tmp_file");
         }
 
         print "   >> Dumping all databases in '$tmp_file' finished.\n";
@@ -152,7 +155,7 @@ die( "Couldn't connect to database: " . DBI->errstr );
 
         # stop slave
         if ($user_option{"stopslave"}) {
-            
+
             # send commant to SQL server
             cmd_sql($server_params, 'STOP SLAVE SQL_THREAD', 0 , 0 , 0);
         }
@@ -184,7 +187,7 @@ die( "Couldn't connect to database: " . DBI->errstr );
 
             # Save Slave SQL server state
             if ($user_option{"stopslave"}) {
-            
+
                 # Save Slave SQL server state
                 cmd_sql($server_params, 'SHOW SLAVE STATUS\\G', $tmp_file , $compress , 1);
 
@@ -194,11 +197,11 @@ die( "Couldn't connect to database: " . DBI->errstr );
 
             if ($user_option{"stopslave"}) {
                 print "   >> Dumping database '$_' in $tmp_file WITH master data...\n";
-                system("/usr/bin/mysqldump $server_params --master-data=1 -B $_ | $compress >> $tmp_file");
+                system("/usr/bin/mysqldump $server_params --single-transaction --master-data=1 -B $_ | $compress >> $tmp_file");
             }
             else {
                 print "   >> Dumping database '$_' in $tmp_file WITHOUT master data...\n";
-                system("/usr/bin/mysqldump $server_params -B $_ | $compress >> $tmp_file");
+                system("/usr/bin/mysqldump $server_params --single-transaction -B $_ | $compress >> $tmp_file");
             }
 
             print "   >> Dumping database '$_' in $tmp_file finished.\n";
@@ -364,5 +367,3 @@ sub showHelp
 
         print join("\n", @showHelpMsg);
 } # END sub showHelp
-
-
