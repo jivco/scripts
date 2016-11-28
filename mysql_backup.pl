@@ -6,6 +6,7 @@
 #       Version:        1.3.4
 #       License:        GPL
 #
+# Changelog: 28-Nov-2016 1.3.5 - added --quick, --routines and --triggers parameters for mysqldump
 # Changelog: 28-Nov-2016 1.3.4 - added --single-transaction parameter for mysqldump
 # Changelog: 13-Jul-2016 1.3.3 - added single quotes around mysql password
 ####
@@ -36,6 +37,8 @@ MAIN:
     my $compress             = "/usr/bin/pbzip2";
     my $full_bkp_name_prefix = "fullSQL";
     my $db_name_prefix = "DB";
+
+    my $dump_default_options = '--single-transaction --quick --routines --triggers';
 
 ########## EDIT HERE ##################
 
@@ -124,11 +127,11 @@ die( "Couldn't connect to database: " . DBI->errstr );
 
         if ($user_option{"stopslave"}) {
             print "   >> Dumping all databases in '$tmp_file' WITH master data...\n";
-            system("/usr/bin/mysqldump $server_params --single-transaction --master-data=1 -B -A | $compress >> $tmp_file");
+            system("/usr/bin/mysqldump $server_params $dump_default_options --master-data=1 -B -A | $compress >> $tmp_file");
         }
         else {
             print "   >> Dumping all databases in '$tmp_file' WITHOUT master data...\n";
-            system("/usr/bin/mysqldump $server_params --single-transaction -B -A | $compress >> $tmp_file");
+            system("/usr/bin/mysqldump $server_params $dump_default_options -B -A | $compress >> $tmp_file");
         }
 
         print "   >> Dumping all databases in '$tmp_file' finished.\n";
@@ -197,11 +200,11 @@ die( "Couldn't connect to database: " . DBI->errstr );
 
             if ($user_option{"stopslave"}) {
                 print "   >> Dumping database '$_' in $tmp_file WITH master data...\n";
-                system("/usr/bin/mysqldump $server_params --single-transaction --master-data=1 -B $_ | $compress >> $tmp_file");
+                system("/usr/bin/mysqldump $server_params $dump_default_options --master-data=1 -B $_ | $compress >> $tmp_file");
             }
             else {
                 print "   >> Dumping database '$_' in $tmp_file WITHOUT master data...\n";
-                system("/usr/bin/mysqldump $server_params --single-transaction -B $_ | $compress >> $tmp_file");
+                system("/usr/bin/mysqldump $server_params $dump_default_options -B $_ | $compress >> $tmp_file");
             }
 
             print "   >> Dumping database '$_' in $tmp_file finished.\n";
