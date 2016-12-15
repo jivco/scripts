@@ -30,7 +30,7 @@ function usage() {
 
 # rsync options
 NICE_LOCAL='nice -n 19 ionice -c 3'
-NICE_REMOTE='--rsync-path="nice -n 19 ionice -c 3 rsync"'
+NICE_REMOTE="${NICE_LOCAL} rsync"
 
 # Get command line parameters
 for i in "$@"
@@ -163,10 +163,10 @@ NOW=$(date +"%d-%m-%Y--%H-%M-%S") || exit $?
 # Start backup and exit with error if something fails (pid file is not removed). Using lowest I/O priority.
 if [[ -z "${EXCLUDELIST}" ]]; then
   echo "Start backup at $NOW. Backuping ${REMOTEPATH} at ${REMOTEHOST} with user ${REMOTEUSER} and key ${REMOTEKEY} to local folder ${LOCALPATH} with bandwidth limit ${KBLIMIT}"
-  ${NICE_LOCAL} rsync -avz --delete --bwlimit=${KBLIMIT} ${NICE_REMOTE} -e "ssh -i ${REMOTEKEY}" ${REMOTEUSER}@${REMOTEHOST}:${REMOTEPATH}/ ${LOCALPATH}/ || exit $?
+  ${NICE_LOCAL} rsync -avz --delete --bwlimit=${KBLIMIT} --rsync-path="${NICE_REMOTE}" -e "ssh -i ${REMOTEKEY}" ${REMOTEUSER}@${REMOTEHOST}:${REMOTEPATH}/ ${LOCALPATH}/ || exit $?
 else
   echo "Start backup at $NOW. Backuping ${REMOTEPATH} at ${REMOTEHOST} with user ${REMOTEUSER} and key ${REMOTEKEY} to local folder ${LOCALPATH} with bandwidth limit ${KBLIMIT} excluding list from ${EXCLUDELIST}"
-  ${NICE_LOCAL} rsync -avz --delete --bwlimit=${KBLIMIT} ${NICE_REMOTE} -e "ssh -i ${REMOTEKEY}" --exclude-from=${EXCLUDELIST} ${REMOTEUSER}@${REMOTEHOST}:${REMOTEPATH}/ ${LOCALPATH}/ || exit $?
+  ${NICE_LOCAL} rsync -avz --delete --bwlimit=${KBLIMIT} --rsync-path="${NICE_REMOTE}" -e "ssh -i ${REMOTEKEY}" --exclude-from=${EXCLUDELIST} ${REMOTEUSER}@${REMOTEHOST}:${REMOTEPATH}/ ${LOCALPATH}/ || exit $?
 fi
 
 echo "Start tarring to ${BACKUPDIR}/${BACKUPPREFIX}-${NOW}.tar"
