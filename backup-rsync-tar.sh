@@ -1,14 +1,15 @@
 #!/bin/bash
-#############################
-#  Backup remote dir by rsync to a #
-#  local folder and theh tar it.         #
-#  Better user a  non-root user.       #
-#                                                      #
-#  ztodorov@neterra.net                 #
-#  ver 0.05                                       #
-#############################
+###########################################
+#  Backup remote dir by rsync to a
+#  local folder and theh tar it.
+#  Better user a  non-root user.
+#
+#  ztodorov@neterra.net
+#  ver 0.06
+###########################################
 
 # changelog
+# ver 0.06 - 19.12.2016 - added -C option to tar to avoid "Removing leading `/' from member names" message
 # ver 0.05 - added NICE_LOCAL and NICE_REMOTE options
 
 # Usage
@@ -170,7 +171,7 @@ else
 fi
 
 echo "Start tarring to ${BACKUPDIR}/${BACKUPPREFIX}-${NOW}.tar"
-${NICE_LOCAL} tar cf ${BACKUPDIR}/${BACKUPPREFIX}-${NOW}.tar ${LOCALPATH}/ || exit $?
+${NICE_LOCAL} tar cf ${BACKUPDIR}/${BACKUPPREFIX}-${NOW}.tar -C ${LOCALPATH} || exit $?
 
 # Delete old backups
 echo "Deleting backup files in ${BACKUPDIR} older than ${DAYSTOKEEP} days"
