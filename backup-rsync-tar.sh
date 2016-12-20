@@ -5,7 +5,7 @@
 # Better user a  non-root user.   #
 #                                 #
 # ztodorov@neterra.net            #
-# ver 0.07                        #
+# ver 0.08                        #
 ###################################
 
 # changelog
