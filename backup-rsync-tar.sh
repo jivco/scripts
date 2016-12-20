@@ -9,6 +9,7 @@
 ###################################
 
 # changelog
+# ver 0.08 - 20.12.2016 - removed exit code on rsync error due to the lack of --ignore-missing-args in CentOS 7
 # ver 0.07 - 20.12.2016 - corrected tar command to work with -C option
 # ver 0.06 - 19.12.2016 - added -C option to tar to avoid "Removing leading `/' from member names" message
 # ver 0.05 - added NICE_LOCAL and NICE_REMOTE options
@@ -165,10 +166,10 @@ NOW=$(date +"%d-%m-%Y--%H-%M-%S") || exit $?
 # Start backup and exit with error if something fails (pid file is not removed). Using lowest I/O priority.
 if [[ -z "${EXCLUDELIST}" ]]; then
   echo "Start backup at $NOW. Backuping ${REMOTEPATH} at ${REMOTEHOST} with user ${REMOTEUSER} and key ${REMOTEKEY} to local folder ${LOCALPATH} with bandwidth limit ${KBLIMIT}"
-  ${NICE_LOCAL} rsync -avz --delete --bwlimit=${KBLIMIT} --rsync-path="${NICE_REMOTE}" -e "ssh -i ${REMOTEKEY}" ${REMOTEUSER}@${REMOTEHOST}:${REMOTEPATH}/ ${LOCALPATH}/ || exit $?
+  ${NICE_LOCAL} rsync -avz --delete --bwlimit=${KBLIMIT} --rsync-path="${NICE_REMOTE}" -e "ssh -i ${REMOTEKEY}" ${REMOTEUSER}@${REMOTEHOST}:${REMOTEPATH}/ ${LOCALPATH}/
 else
   echo "Start backup at $NOW. Backuping ${REMOTEPATH} at ${REMOTEHOST} with user ${REMOTEUSER} and key ${REMOTEKEY} to local folder ${LOCALPATH} with bandwidth limit ${KBLIMIT} excluding list from ${EXCLUDELIST}"
-  ${NICE_LOCAL} rsync -avz --delete --bwlimit=${KBLIMIT} --rsync-path="${NICE_REMOTE}" -e "ssh -i ${REMOTEKEY}" --exclude-from=${EXCLUDELIST} ${REMOTEUSER}@${REMOTEHOST}:${REMOTEPATH}/ ${LOCALPATH}/ || exit $?
+  ${NICE_LOCAL} rsync -avz --delete --bwlimit=${KBLIMIT} --rsync-path="${NICE_REMOTE}" -e "ssh -i ${REMOTEKEY}" --exclude-from=${EXCLUDELIST} ${REMOTEUSER}@${REMOTEHOST}:${REMOTEPATH}/ ${LOCALPATH}/
 fi
 
 echo "Start tarring to ${BACKUPDIR}/${BACKUPPREFIX}-${NOW}.tar"
