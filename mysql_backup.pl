@@ -2,10 +2,11 @@
 ####
 #       Author:         Anton Antonov  <aantonov@neterra.net>
 #       Author:         Zhivko Todorov <ztodorov@neterra.net> - add feature to pass custom arguments and code cleanup
-#       Date:           28-Nov-2016
-#       Version:        1.3.4
+#       Date:           6-Jan-2017
+#       Version:        1.4.0
 #       License:        GPL
 #
+# Changelog: 6-Jan-2017 1.4.0 - added exit code check on all system commands
 # Changelog: 28-Nov-2016 1.3.5 - added --quick, --routines and --triggers parameters for mysqldump
 # Changelog: 28-Nov-2016 1.3.4 - added --single-transaction parameter for mysqldump
 # Changelog: 13-Jul-2016 1.3.3 - added single quotes around mysql password
@@ -127,11 +128,15 @@ die( "Couldn't connect to database: " . DBI->errstr );
 
         if ($user_option{"stopslave"}) {
             print "   >> Dumping all databases in '$tmp_file' WITH master data...\n";
-            system("/usr/bin/mysqldump $server_params $dump_default_options --master-data=1 -B -A | $compress >> $tmp_file");
+            if (system("/usr/bin/mysqldump $server_params $dump_default_options --master-data=1 -B -A | $compress >> $tmp_file") != 0) {
+               die("Error dumping all databases in '$tmp_file' WITH master data...\n");
+             }
         }
         else {
             print "   >> Dumping all databases in '$tmp_file' WITHOUT master data...\n";
-            system("/usr/bin/mysqldump $server_params $dump_default_options -B -A | $compress >> $tmp_file");
+            if (system("/usr/bin/mysqldump $server_params $dump_default_options -B -A | $compress >> $tmp_file") != 0) {
+              die("Error dumping all databases in '$tmp_file' WITHOUT master data...\n");
+            }
         }
 
         print "   >> Dumping all databases in '$tmp_file' finished.\n";
@@ -200,11 +205,15 @@ die( "Couldn't connect to database: " . DBI->errstr );
 
             if ($user_option{"stopslave"}) {
                 print "   >> Dumping database '$_' in $tmp_file WITH master data...\n";
-                system("/usr/bin/mysqldump $server_params $dump_default_options --master-data=1 -B $_ | $compress >> $tmp_file");
+                if (system("/usr/bin/mysqldump $server_params $dump_default_options --master-data=1 -B $_ | $compress >> $tmp_file") != 0) {
+                   die("Error dumping all databases in '$tmp_file' WITH master data...\n");
+                 }
             }
             else {
                 print "   >> Dumping database '$_' in $tmp_file WITHOUT master data...\n";
-                system("/usr/bin/mysqldump $server_params $dump_default_options -B $_ | $compress >> $tmp_file");
+                if (system("/usr/bin/mysqldump $server_params $dump_default_options -B $_ | $compress >> $tmp_file") != 0) {
+                   die("Error dumping all databases in '$tmp_file' WITHOUT master data...\n");
+                 }
             }
 
             print "   >> Dumping database '$_' in $tmp_file finished.\n";
@@ -238,12 +247,16 @@ sub cmd_sql {
 
     if ($tmp_file) {
         print "   >> Start executing SQL Command: '$cmd_sql' and saving output to '$tmp_file'\n";
-        system("/usr/bin/mysql $server_params -e \"$cmd_sql\" > $tmp_file");
+        if (system("/usr/bin/mysql $server_params -e \"$cmd_sql\" > $tmp_file") != 0)  {
+           die("Error start executing SQL Command: '$cmd_sql' and saving output to '$tmp_file'\n");
+         }
         print "   >> Executing SQL Command: '$cmd_sql' and saving output to '$tmp_file' finished\n";
 
         if ($comment_output) {
             print "   >> Start commenting '$tmp_file'\n";
-            system("/bin/sed -i 's/^/#/' $tmp_file");
+            if (system("/bin/sed -i 's/^/#/' $tmp_file") != 0)  {
+               die("Error start commenting '$tmp_file'\n");
+             }
             print "   >> Commenting '$tmp_file' finished\n";
         }
 
@@ -253,15 +266,23 @@ sub cmd_sql {
             exit(1);
         }
 
-        system("mv $tmp_file \"$tmp_file.tmp\"");
-        system("$compress \"$tmp_file.tmp\"");
-        system("mv \"$tmp_file.tmp.bz2\" $tmp_file");
+        if (system("mv $tmp_file \"$tmp_file.tmp\"") != 0)  {
+           die("Error moving '$tmp_file'\n");
+         }
+        if (system("$compress \"$tmp_file.tmp\"") != 0)  {
+           die("Error compessing '$tmp_file.tmp'\n");
+         }
+        if (system("mv \"$tmp_file.tmp.bz2\" $tmp_file") != 0)  {
+           die("Error moving '$tmp_file.tmp.bz2'\n");
+         }
 
     }
 
     else {
         print "   >> Start executing SQL Command: '$cmd_sql'\n";
-        system("/usr/bin/mysql $server_params -e \"$cmd_sql\"");
+        if (system("/usr/bin/mysql $server_params -e \"$cmd_sql\"") != 0)  {
+           die("Error start executing SQL Command: '$cmd_sql'\n");
+         }
         print "   >> Executing SQL Command: '$cmd_sql' finished\n";
     }
 }
