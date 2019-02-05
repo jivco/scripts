@@ -39,7 +39,7 @@ MAIN:
     my $full_bkp_name_prefix = "fullSQL";
     my $db_name_prefix = "DB";
 
-    my $dump_default_options = '--single-transaction --quick --routines --triggers';
+    my $dump_default_options = '--single-transaction --quick --routines --triggers --events';
 
 ########## EDIT HERE ##################
 
