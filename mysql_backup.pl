@@ -2,10 +2,11 @@
 ####
 #       Author:         Anton Antonov  <aantonov@neterra.net>
 #       Author:         Zhivko Todorov <ztodorov@neterra.net> - add feature to pass custom arguments and code cleanup
-#       Date:           6-Jan-2017
-#       Version:        1.4.0
+#       Date:           5-Feb-2019
+#       Version:        1.4.1
 #       License:        GPL
 #
+# Changelog: 5-Feb-2019 1.4.1 - added --events parameter for mysqldump
 # Changelog: 6-Jan-2017 1.4.0 - added exit code check on all system commands
 # Changelog: 28-Nov-2016 1.3.5 - added --quick, --routines and --triggers parameters for mysqldump
 # Changelog: 28-Nov-2016 1.3.4 - added --single-transaction parameter for mysqldump
