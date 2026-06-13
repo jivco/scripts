@@ -368,6 +368,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
     clearBtn.addEventListener('click', () => {
       urlInput.value = '';
       clearBtn.hidden = true;
+      openBtn.hidden = true;
+      openBtn.removeAttribute('href');
       urlInput.focus();
     });
   </script>
