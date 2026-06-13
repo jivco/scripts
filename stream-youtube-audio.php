@@ -4,6 +4,24 @@
  * Saves the best available audio stream to a directory — no re-encoding.
  * Requires PHP 8+ (Debian 13 ships PHP 8.4).
  *
+ * DANGER! - for personal use only on internal home network - there is
+ * no auth or security, no concurency - runs with built-in php webserver
+ * on Rasbery Pi
+ *
+ * /etc/fstab:
+ * tmpfs /var/www/youtube tmpfs defaults,noatime,size=100M,mode=1777 0 0
+ * 
+ * Install requirements:
+ * apt install -y php-cli pipx
+ * sudo -u www-data bash
+ * pipx install yt-dlp
+ * pipx ensurepath
+ * mkdir /var/www/youtube
+ * chown www-data: /var/www/youtube
+ * 
+ * Run:
+ * cd /var/www;screen -dmS php sudo -u www-data php -S 0.0.0.0:8080
+ *
  * Everything lives in this one file, which now answers in three ways:
  *   - normal GET         → show the HTML page
  *   - POST  ?stream=1    → run yt-dlp and stream its output live (text/plain)
@@ -11,6 +29,8 @@
  */
 
 // ---- Configuration ----------------------------------------------------------
+
+// 
 
 // Absolute path to the yt-dlp binary.
 // IMPORTANT: a pipx install lives in the INSTALLING user's home
