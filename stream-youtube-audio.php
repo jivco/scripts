@@ -10,7 +10,7 @@
  *
  * /etc/fstab:
  * tmpfs /var/www/youtube tmpfs defaults,noatime,size=100M,mode=1777 0 0
- * 
+ *
  * Install requirements:
  * apt install -y php-cli pipx
  * sudo -u www-data bash
@@ -18,7 +18,7 @@
  * pipx ensurepath
  * mkdir /var/www/youtube
  * chown www-data: /var/www/youtube
- * 
+ *
  * Run:
  * cd /var/www;screen -dmS php sudo -u www-data php -S 0.0.0.0:8080
  *
@@ -30,7 +30,7 @@
 
 // ---- Configuration ----------------------------------------------------------
 
-// 
+//
 
 // Absolute path to the yt-dlp binary.
 // IMPORTANT: a pipx install lives in the INSTALLING user's home
@@ -387,6 +387,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
 
     clearBtn.addEventListener('click', () => {
       urlInput.value = '';
+      statusEl.value = '';
+      logEl.value = '';
+      statusEl.hidden = true;
+      logEl.hidden = true;
       clearBtn.hidden = true;
       openBtn.hidden = true;
       openBtn.removeAttribute('href');
