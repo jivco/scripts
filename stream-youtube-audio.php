@@ -280,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
   </style>
 </head>
 <body>
-  <h1>Download YouTube audio</h1>
+  <h1>Stream YouTube audio</h1>
 
   <form id="dl-form" method="post">
     <input type="url" id="url" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
