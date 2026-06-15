@@ -9,18 +9,18 @@
  * on Rasbery Pi
  *
  * /etc/fstab:
- * tmpfs /var/www/youtube tmpfs defaults,noatime,size=100M,mode=1777 0 0
+ * tmpfs /var/www/public/some-hard-to-guess-random-name tmpfs defaults,noatime,size=100M,mode=1777 0 0
  *
  * Install requirements:
  * apt install -y php-cli pipx
  * sudo -u www-data bash
  * pipx install yt-dlp
  * pipx ensurepath
- * mkdir /var/www/youtube
- * chown www-data: /var/www/youtube
+ * mkdir -p /var/www/public/some-hard-to-guess-random-name
+ * chown www-data: /var/www/public/some-hard-to-guess-random-name
  *
  * Run:
- * cd /var/www;screen -dmS php sudo -u www-data php -S 0.0.0.0:8080
+ * cd /var/www/public;screen -dmS php sudo -u www-data php -S 0.0.0.0:8080
  *
  * Everything lives in this one file, which now answers in three ways:
  *   - normal GET         → show the HTML page
@@ -40,7 +40,7 @@
 $ytDlp = '/var/www/.local/bin/yt-dlp';
 
 // Where downloaded audio files should be saved.
-$downloadDir = '/var/www/youtube';
+$downloadDir = '/var/www/public/some-hard-to-guess-random-name';
 
 // Fixed base name for the saved file. The same name is reused every time, so
 // each new download overwrites the previous one. With -f bestaudio the
