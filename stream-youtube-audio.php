@@ -262,9 +262,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>YouTube Audio Downloader</title>
+  <title>Stream YouTube Audio</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 640px; margin: 3rem auto; padding: 0 1rem; }
+    h1 { white-space: nowrap; font-size: clamp(1.1rem, 5.5vw, 2rem); }
     input[type=url] { width: 100%; padding: .6rem; box-sizing: border-box; }
     .row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-top: .6rem; }
     .btn { display: inline-block; padding: .6rem 1.2rem; font: inherit; cursor: pointer;
@@ -272,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
            color: inherit; text-decoration: none; }
     .btn:hover { background: #f0f0f0; }
     .btn[disabled] { opacity: .6; cursor: default; }
-    pre { background: #f4f4f4; padding: 1rem; overflow: auto; white-space: pre-wrap; max-height: 320px; }
+    pre { background: #f4f4f4; padding: 1rem; overflow: auto; white-space: pre-wrap; max-height: 240px; }
     .msg { font-weight: bold; }
     .msg.ok { color: #137333; }
     .msg.error { color: #c5221f; }
@@ -280,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
   </style>
 </head>
 <body>
-  <h1>Stream YouTube audio</h1>
+  <h1>Stream YouTube Audio</h1>
 
   <form id="dl-form" method="post">
     <input type="url" id="url" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
@@ -368,6 +369,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['url'])) {
         // Cache-bust because the filename is reused on every download.
         openBtn.href = '?download=1&t=' + Date.now();
         openBtn.hidden = false;
+        // Auto-open the file in a new tab by "pressing" the button for the
+        // user. NOTE: this click runs after an async download, not directly
+        // from the user's own click, so the browser may treat the new tab as
+        // an unrequested pop-up and block it. If that happens the button stays
+        // visible as a one-click fallback — allow pop-ups for this site to
+        // make the auto-open stick.
+        openBtn.click();
       } else if (result && result.code === 0) {
         statusEl.textContent = 'Done, but the saved file could not be found.';
         statusEl.classList.add('error');
